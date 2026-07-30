@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location:login.php");
+    exit();
+}
 include 'config/db.php';
 
 if(isset($_POST['save']))

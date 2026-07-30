@@ -1,8 +1,22 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location:login.php");
+    exit();
+}
 include 'config/db.php';
 
 $search = isset($_GET['q']) ? trim($_GET['q']) : '';
 $movies = [];
+
+// ---- Build correct poster path whether it's an uploaded file or a pasted URL ----
+function posterSrc($poster) {
+    if (empty($poster)) return '';
+    if (strpos($poster, 'http://') === 0 || strpos($poster, 'https://') === 0) {
+        return $poster;
+    }
+    return 'uploads/' . $poster;
+}
 
 if ($search !== '') {
     $searchEsc = $conn->real_escape_string($search);
@@ -316,6 +330,12 @@ Movie<span>Verse</span>
 Add Movie
 </a>
 
+<a href="logout.php" style="color:#ddd;text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;" title="Logout">
+<i class="fa-solid fa-user" style="color:#8b5cf6;"></i>
+<?php echo htmlspecialchars($_SESSION['username']); ?>
+<i class="fa-solid fa-right-from-bracket"></i>
+</a>
+
 </header>
 
 <section class="search-hero">
@@ -360,14 +380,17 @@ No results found for "<?php echo htmlspecialchars($search); ?>".
 <div class="card">
 <div class="card-poster">
 <?php if (!empty($movie['poster'])): ?>
-<img src="uploads/<?php echo htmlspecialchars($movie['poster']); ?>" alt="<?php echo htmlspecialchars($movie['title']); ?>">
+<img src="<?php echo htmlspecialchars(posterSrc($movie['poster'])); ?>" alt="<?php echo htmlspecialchars($movie['title']); ?>">
 <?php else: ?>
 <i class="fa-solid fa-clapperboard"></i>
 <?php endif; ?>
 </div>
 <div class="card-body">
 <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
-<p><?php echo htmlspecialchars($movie['genre']); ?></p>
+<p>
+<?php echo ($movie['type'] === 'Book') ? '📚' : '🎬'; ?>
+<?php echo htmlspecialchars($movie['genre']); ?>
+</p>
 <span class="rating-badge">
 <i class="fa-solid fa-star"></i>
 <?php echo htmlspecialchars($movie['rating']); ?>

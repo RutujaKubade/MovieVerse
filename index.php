@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location:login.php");
+    exit();
+}
 include 'config/db.php';
 
 // ---- Search & Filter ----
@@ -48,7 +53,7 @@ $totalRows = $countResult ? $countResult->fetch_assoc()['total'] : 0;
 $totalPages = max(1, ceil($totalRows / $perPage));
 
 // ---- Fetch movies/books for current page ----
-$sql = "SELECT * FROM library $whereClause ORDER BY id DESC LIMIT $offset, $perPage";
+$sql = "SELECT * FROM library $whereClause ORDER BY (type = 'Book'), id DESC LIMIT $offset, $perPage";
 $result = $conn->query($sql);
 $movies = [];
 if ($result && $result->num_rows > 0) {
@@ -63,7 +68,7 @@ $isDefaultView = ($search === '' && $genreFilter === '' && $typeFilter === '' &&
 // ---- Top rated (only shown on default view) ----
 $topRated = [];
 if ($isDefaultView) {
-    $topRatedSql = "SELECT * FROM library ORDER BY rating DESC LIMIT 4";
+    $topRatedSql = "SELECT * FROM library ORDER BY (type = 'Book'), rating DESC LIMIT 4";
     $topRatedResult = $conn->query($topRatedSql);
     if ($topRatedResult && $topRatedResult->num_rows > 0) {
         while ($row = $topRatedResult->fetch_assoc()) {
@@ -568,6 +573,12 @@ value="<?php echo htmlspecialchars($search); ?>">
 <a href="add.php" class="add-btn">
 <i class="fa-solid fa-plus"></i>
 Add Movie
+</a>
+
+<a href="logout.php" style="color:#ddd;text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;" title="Logout">
+<i class="fa-solid fa-user" style="color:#8b5cf6;"></i>
+<?php echo htmlspecialchars($_SESSION['username']); ?>
+<i class="fa-solid fa-right-from-bracket"></i>
 </a>
 
 </div>

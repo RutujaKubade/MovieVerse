@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location:login.php");
+    exit();
+}
 include 'config/db.php';
 
 // ---- Build correct poster path whether it's an uploaded file or a pasted URL ----
