@@ -136,7 +136,6 @@ http://localhost/movie_library
 
 ## 🚀 Future Improvements
 
-- ❤️ Favorite Movies & Books
 - ⭐ Ratings & Reviews
 - 🎭 Category Filtering
 - 📱 Better Mobile Responsiveness
