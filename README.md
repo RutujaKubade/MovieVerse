@@ -125,13 +125,6 @@ http://localhost/movie_library
 
 ---
 
-### 📚 Dashboard
-
-> *(Add screenshot here)*
-
-![Dashboard](screenshots/dashboard.png)
-
----
 
 ### 🎬 Movie & Book List
 
